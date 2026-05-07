@@ -1,3 +1,15 @@
-/target
-tla2tools.jar
-.idea
+# TLC artefacts
+states/
+tla/*_TTrace_*.tla
+tla/*_TTrace_*.bin
+
+# Rust build
+target/
+Cargo.lock
+
+# IDE
+.idea/
+*.iml
+
+# OS
+.DS_Store
