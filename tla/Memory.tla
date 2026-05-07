@@ -22,7 +22,8 @@ OpRecord == [
     write_set      : SUBSET Cells,
     write_values   : [Cells -> Values \cup {NULL}],
     write_registry : SUBSET Tools,
-    write_time     : Nat
+    write_time     : Nat,
+    reordered      : BOOLEAN
 ]
 
 IdleOp(a) == [
@@ -36,7 +37,8 @@ IdleOp(a) == [
     write_set      |-> {},
     write_values   |-> [c \in Cells |-> NULL],
     write_registry |-> {},
-    write_time     |-> 0
+    write_time     |-> 0,
+    reordered      |-> FALSE
 ]
 
 LatestWriteBefore(c, t) ==
@@ -70,31 +72,35 @@ StartRead(a) ==
              write_set      |-> {},
              write_values   |-> [c \in Cells |-> NULL],
              write_registry |-> {},
-             write_time     |-> 0
+             write_time     |-> 0,
+             reordered      |-> FALSE
          ]]
     /\ UNCHANGED <<memory, log, registry>>
 
 CompleteWrite(a) ==
     /\ inflight[a].pending = TRUE
-    /\ \E ws \in SUBSET Cells, wv \in [Cells -> Values] :
-         LET op == [
-                pending        |-> FALSE,
-                agent          |-> a,
-                read_set       |-> inflight[a].read_set,
-                read_values    |-> inflight[a].read_values,
-                read_registry  |-> inflight[a].read_registry,
-                planned_tool   |-> inflight[a].planned_tool,
-                read_time      |-> inflight[a].read_time,
-                write_set      |-> ws,
-                write_values   |-> [c \in Cells |->
-                                      IF c \in ws THEN wv[c] ELSE NULL],
-                write_registry |-> registry,
-                write_time     |-> Len(log) + 1
-             ]
-         IN  /\ memory'   = [c \in Cells |->
-                                IF c \in ws THEN wv[c] ELSE memory[c]]
-             /\ log'      = Append(log, op)
-             /\ inflight' = [inflight EXCEPT ![a] = IdleOp(a)]
+    /\ \E ws \in SUBSET Cells, wv \in [Cells -> Values], r \in BOOLEAN :
+         \* Reordering only makes sense for operations with multiple writes.
+         /\ (r => Cardinality(ws) >= 2)
+         /\ LET op == [
+                  pending        |-> FALSE,
+                  agent          |-> a,
+                  read_set       |-> inflight[a].read_set,
+                  read_values    |-> inflight[a].read_values,
+                  read_registry  |-> inflight[a].read_registry,
+                  planned_tool   |-> inflight[a].planned_tool,
+                  read_time      |-> inflight[a].read_time,
+                  write_set      |-> ws,
+                  write_values   |-> [c \in Cells |->
+                                        IF c \in ws THEN wv[c] ELSE NULL],
+                  write_registry |-> registry,
+                  write_time     |-> Len(log) + 1,
+                  reordered      |-> r
+               ]
+            IN  /\ memory'   = [c \in Cells |->
+                                  IF c \in ws THEN wv[c] ELSE memory[c]]
+                /\ log'      = Append(log, op)
+                /\ inflight' = [inflight EXCEPT ![a] = IdleOp(a)]
     /\ UNCHANGED registry
 
 RemoveTool(t) ==

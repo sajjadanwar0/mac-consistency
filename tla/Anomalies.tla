@@ -2,7 +2,6 @@
 EXTENDS Memory
 
 \* A1. Stale-Generation
-\*   Read context becomes stale DURING the operation's generation window.
 StaleGeneration(history) ==
     \E i, j \in 1..Len(history) :
         /\ i # j
@@ -19,10 +18,7 @@ PhantomTool(history) ==
         /\ history[i].planned_tool \in history[i].read_registry
         /\ history[i].planned_tool \notin history[i].write_registry
 
-\* A3. Causal-Cascade
-\*   An op produced an external effect and its read context was retracted
-\*   AFTER the external commit. Distinct from A1: the retraction happens
-\*   post-write, so the external effect persists with no current grounding.
+\* A3. Causal-Cascade (post-commit retraction)
 CausalCascade(history) ==
     \E j \in 1..Len(history) :
         /\ history[j].write_set \cap ExternalCells # {}
@@ -31,10 +27,10 @@ CausalCascade(history) ==
               /\ \E k \in 1..Len(history) :
                     /\ k # j
                     /\ c \in history[k].write_set
-                    /\ history[k].write_time > history[j].write_time   \* tightened
+                    /\ history[k].write_time > history[j].write_time
                     /\ history[k].write_values[c] # history[j].read_values[c]
 
-\* A4. Split-View (TODO Week 3)
+\* A4. Split-View (TODO Week 3 — requires replication)
 SplitView(history) == FALSE
 
 \* A5. Long-Generation Window
@@ -49,7 +45,13 @@ LongGeneration(history) ==
             /\ history[j].write_set \cap history[i].read_set # {}
             /\ history[k].write_set \cap history[i].read_set # {}
 
-\* A6. Tool-Effect Reordering (TODO Week 3)
-ToolEffectReordering(history) == FALSE
+\* A6. Tool-Effect Reordering
+\*   An op committed with non-atomic externalisation: its tool effects
+\*   were applied in an order different from the issuance order. The
+\*   model abstracts this as a boolean flag; the witness is any op with
+\*   reordered = TRUE (which requires |write_set| >= 2 in CompleteWrite).
+ToolEffectReordering(history) ==
+    \E i \in 1..Len(history) :
+        history[i].reordered = TRUE
 
 ================================================================================
