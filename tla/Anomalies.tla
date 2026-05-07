@@ -19,9 +19,6 @@ PhantomTool(history) ==
         /\ history[i].planned_tool \notin history[i].write_registry
 
 \* A3. Causal-Cascade
-\*   An op produces external effects while its read-set was a non-external
-\*   cell whose value has since been changed by another op. The external
-\*   effect persists with no current causal grounding.
 CausalCascade(history) ==
     \E j \in 1..Len(history) :
         /\ history[j].write_set \cap ExternalCells # {}
@@ -33,13 +30,24 @@ CausalCascade(history) ==
                     /\ history[k].write_time > history[j].read_time
                     /\ history[k].write_values[c] # history[j].read_values[c]
 
-\* A4. Split-View (TODO Week 2)
+\* A4. Split-View (TODO Week 3 — requires replication)
 SplitView(history) == FALSE
 
-\* A5. Long-Generation Window (TODO Week 3)
-LongGeneration(history) == FALSE
+\* A5. Long-Generation Window
+\*   An op's generation spans a window during which two or more *other*
+\*   ops wrote to cells in its read_set. Strictly stronger than A1.
+LongGeneration(history) ==
+    \E i \in 1..Len(history) :
+        \E j, k \in 1..Len(history) :
+            /\ j # k /\ j # i /\ k # i
+            /\ history[j].write_time > history[i].read_time
+            /\ history[j].write_time < history[i].write_time
+            /\ history[k].write_time > history[i].read_time
+            /\ history[k].write_time < history[i].write_time
+            /\ history[j].write_set \cap history[i].read_set # {}
+            /\ history[k].write_set \cap history[i].read_set # {}
 
-\* A6. Tool-Effect Reordering (TODO Week 3)
+\* A6. Tool-Effect Reordering (TODO Week 3 — requires sub-operations)
 ToolEffectReordering(history) == FALSE
 
 ================================================================================
