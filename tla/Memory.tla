@@ -1,10 +1,11 @@
 --------------------------------- MODULE Memory ---------------------------------
 EXTENDS Naturals, Sequences, FiniteSets, TLC
 
-CONSTANTS Agents, Cells, Values, NULL, MaxOps, Tools
+CONSTANTS Agents, Cells, Values, NULL, MaxOps, Tools, ExternalCells
 
 ASSUME NULL \notin Values
 ASSUME NULL \notin Tools
+ASSUME ExternalCells \subseteq Cells
 
 VARIABLES memory, log, inflight, registry
 
@@ -53,8 +54,6 @@ Init ==
     /\ inflight = [a \in Agents |-> IdleOp(a)]
     /\ registry = Tools
 
-(* StartRead: agent reads memory and a registry snapshot, optionally
-   picks one tool from the snapshot to plan to invoke later. *)
 StartRead(a) ==
     /\ inflight[a].pending = FALSE
     /\ Len(log) < MaxOps
@@ -75,7 +74,6 @@ StartRead(a) ==
          ]]
     /\ UNCHANGED <<memory, log, registry>>
 
-(* CompleteWrite: agent commits, recording the registry state at write_time. *)
 CompleteWrite(a) ==
     /\ inflight[a].pending = TRUE
     /\ \E ws \in SUBSET Cells, wv \in [Cells -> Values] :
@@ -99,9 +97,6 @@ CompleteWrite(a) ==
              /\ inflight' = [inflight EXCEPT ![a] = IdleOp(a)]
     /\ UNCHANGED registry
 
-(* RemoveTool: at any moment, a tool may be removed from the registry.
-   This is what creates the gap between an agent's planned_tool and the
-   registry contents at write_time. *)
 RemoveTool(t) ==
     /\ t \in registry
     /\ registry' = registry \ {t}

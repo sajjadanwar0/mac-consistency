@@ -12,16 +12,26 @@ StaleGeneration(history) ==
               /\ history[i].read_values[c] # history[j].write_values[c]
 
 \* A2. Phantom-Tool
-\*   An agent observes a tool t in the registry at read_time, plans to use
-\*   it, but t is no longer in the registry at write_time.
 PhantomTool(history) ==
     \E i \in 1..Len(history) :
         /\ history[i].planned_tool # NULL
         /\ history[i].planned_tool \in history[i].read_registry
         /\ history[i].planned_tool \notin history[i].write_registry
 
-\* A3. Causal-Cascade (TODO Week 2)
-CausalCascade(history) == FALSE
+\* A3. Causal-Cascade
+\*   An op produces external effects while its read-set was a non-external
+\*   cell whose value has since been changed by another op. The external
+\*   effect persists with no current causal grounding.
+CausalCascade(history) ==
+    \E j \in 1..Len(history) :
+        /\ history[j].write_set \cap ExternalCells # {}
+        /\ \E c \in history[j].read_set :
+              /\ c \notin ExternalCells
+              /\ \E k \in 1..Len(history) :
+                    /\ k # j
+                    /\ c \in history[k].write_set
+                    /\ history[k].write_time > history[j].read_time
+                    /\ history[k].write_values[c] # history[j].read_values[c]
 
 \* A4. Split-View (TODO Week 2)
 SplitView(history) == FALSE
