@@ -2,6 +2,7 @@
 EXTENDS Memory
 
 \* A1. Stale-Generation
+\*   Read context becomes stale DURING the operation's generation window.
 StaleGeneration(history) ==
     \E i, j \in 1..Len(history) :
         /\ i # j
@@ -19,6 +20,9 @@ PhantomTool(history) ==
         /\ history[i].planned_tool \notin history[i].write_registry
 
 \* A3. Causal-Cascade
+\*   An op produced an external effect and its read context was retracted
+\*   AFTER the external commit. Distinct from A1: the retraction happens
+\*   post-write, so the external effect persists with no current grounding.
 CausalCascade(history) ==
     \E j \in 1..Len(history) :
         /\ history[j].write_set \cap ExternalCells # {}
@@ -27,15 +31,13 @@ CausalCascade(history) ==
               /\ \E k \in 1..Len(history) :
                     /\ k # j
                     /\ c \in history[k].write_set
-                    /\ history[k].write_time > history[j].read_time
+                    /\ history[k].write_time > history[j].write_time   \* tightened
                     /\ history[k].write_values[c] # history[j].read_values[c]
 
-\* A4. Split-View (TODO Week 3 — requires replication)
+\* A4. Split-View (TODO Week 3)
 SplitView(history) == FALSE
 
 \* A5. Long-Generation Window
-\*   An op's generation spans a window during which two or more *other*
-\*   ops wrote to cells in its read_set. Strictly stronger than A1.
 LongGeneration(history) ==
     \E i \in 1..Len(history) :
         \E j, k \in 1..Len(history) :
@@ -47,7 +49,7 @@ LongGeneration(history) ==
             /\ history[j].write_set \cap history[i].read_set # {}
             /\ history[k].write_set \cap history[i].read_set # {}
 
-\* A6. Tool-Effect Reordering (TODO Week 3 — requires sub-operations)
+\* A6. Tool-Effect Reordering (TODO Week 3)
 ToolEffectReordering(history) == FALSE
 
 ================================================================================
