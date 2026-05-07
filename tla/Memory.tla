@@ -9,9 +9,11 @@ VARIABLES memory, log, inflight
 
 vars == <<memory, log, inflight>>
 
-NONE == "NONE"
-
+(* An OpRecord now carries a `pending` flag so that idle and active states
+   are both records of the same shape. This keeps TLC's strict equality
+   checker happy. *)
 OpRecord == [
+    pending      : BOOLEAN,
     agent        : Agents,
     read_set     : SUBSET Cells,
     read_values  : [Cells -> Values \cup {NULL}],
@@ -19,6 +21,18 @@ OpRecord == [
     write_set    : SUBSET Cells,
     write_values : [Cells -> Values \cup {NULL}],
     write_time   : Nat
+]
+
+(* Default record used to populate inflight slots for idle agents. *)
+IdleOp(a) == [
+    pending      |-> FALSE,
+    agent        |-> a,
+    read_set     |-> {},
+    read_values  |-> [c \in Cells |-> NULL],
+    read_time    |-> 0,
+    write_set    |-> {},
+    write_values |-> [c \in Cells |-> NULL],
+    write_time   |-> 0
 ]
 
 LatestWriteBefore(c, t) ==
@@ -33,13 +47,14 @@ LatestWriteBefore(c, t) ==
 Init ==
     /\ memory = [c \in Cells |-> NULL]
     /\ log = << >>
-    /\ inflight = [a \in Agents |-> NONE]
+    /\ inflight = [a \in Agents |-> IdleOp(a)]
 
 StartRead(a) ==
-    /\ inflight[a] = NONE
+    /\ inflight[a].pending = FALSE
     /\ Len(log) < MaxOps
     /\ \E rs \in SUBSET Cells :
          inflight' = [inflight EXCEPT ![a] = [
+             pending      |-> TRUE,
              agent        |-> a,
              read_set     |-> rs,
              read_values  |-> [c \in Cells |->
@@ -52,16 +67,23 @@ StartRead(a) ==
     /\ UNCHANGED <<memory, log>>
 
 CompleteWrite(a) ==
-    /\ inflight[a] # NONE
+    /\ inflight[a].pending = TRUE
     /\ \E ws \in SUBSET Cells, wv \in [Cells -> Values] :
-         LET op == [inflight[a] EXCEPT
-                      !.write_set = ws,
-                      !.write_values = wv,
-                      !.write_time = Len(log) + 1]
+         LET op == [
+                pending      |-> FALSE,
+                agent        |-> a,
+                read_set     |-> inflight[a].read_set,
+                read_values  |-> inflight[a].read_values,
+                read_time    |-> inflight[a].read_time,
+                write_set    |-> ws,
+                write_values |-> [c \in Cells |->
+                                    IF c \in ws THEN wv[c] ELSE NULL],
+                write_time   |-> Len(log) + 1
+             ]
          IN  /\ memory' = [c \in Cells |->
                               IF c \in ws THEN wv[c] ELSE memory[c]]
              /\ log' = Append(log, op)
-             /\ inflight' = [inflight EXCEPT ![a] = NONE]
+             /\ inflight' = [inflight EXCEPT ![a] = IdleOp(a)]
 
 Next == \E a \in Agents : StartRead(a) \/ CompleteWrite(a)
 
@@ -70,6 +92,6 @@ Spec == Init /\ [][Next]_vars
 TypeOK ==
     /\ memory \in [Cells -> Values \cup {NULL}]
     /\ log \in Seq(OpRecord)
-    /\ inflight \in [Agents -> OpRecord \cup {NONE}]
+    /\ inflight \in [Agents -> OpRecord]
 
 ================================================================================
