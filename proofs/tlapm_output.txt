@@ -1,0 +1,5 @@
+(* loading fingerprints in ".tlacache/Hierarchy.tlaps/fingerprints" *)
+(* created new ".tlacache/Hierarchy.tlaps/Hierarchy.thy" *)
+(* fingerprints written in ".tlacache/Hierarchy.tlaps/fingerprints" *)
+File "./Hierarchy.tla", line 1, character 1 to line 124, character 80:
+[INFO]: All 21 obligations proved.
