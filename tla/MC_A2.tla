@@ -1,6 +1,6 @@
 ---------------------------------- MODULE MC_A2 ----------------------------------
+(* Witness harness for A2 (Phantom-Tool). *)
 EXTENDS Memory, Anomalies
 
-PhantomToolFree == ~PhantomTool(log)
-
+NoPhantomTool == ~PhantomTool(log)
 ================================================================================

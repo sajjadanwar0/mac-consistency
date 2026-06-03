@@ -1,17 +1,17 @@
 TLC2 Version 2026.04.09.014118 (rev: 389440f)
 Warning: Please run the Java VM, which executes TLC with a throughput optimized garbage collector, by passing the "-XX:+UseParallelGC" property.
 (Use the -nowarning option to disable this warning.)
-Running breadth-first search Model-Checking with fp 123 and seed -1686237032727623228 with 1 worker on 16 cores with 7716MB heap and 64MB offheap memory [pid: 192391] (Linux 6.8.0-111-generic amd64, Ubuntu 21.0.10 64bit, MSBDiskFPSet, DiskStateQueue).
+Running breadth-first search Model-Checking with fp 85 and seed -1757318251166143363 with 4 workers on 16 cores with 7716MB heap and 64MB offheap memory [pid: 135655] (Linux 6.8.0-111-generic amd64, Ubuntu 21.0.10 64bit, MSBDiskFPSet, DiskStateQueue).
 Parsing file /home/neo/RustroverProjects/mac-consistency/tla/MC_A3.tla
 Parsing file /home/neo/RustroverProjects/mac-consistency/tla/Memory.tla
 Parsing file /home/neo/RustroverProjects/mac-consistency/tla/Anomalies.tla
-Parsing file /tmp/tlc-6758078122486133229/_TLCTrace.tla (jar:file:/home/neo/RustroverProjects/mac-consistency/tla2tools.jar!/tla2sany/StandardModules/_TLCTrace.tla)
-Parsing file /tmp/tlc-6758078122486133229/Naturals.tla (jar:file:/home/neo/RustroverProjects/mac-consistency/tla2tools.jar!/tla2sany/StandardModules/Naturals.tla)
-Parsing file /tmp/tlc-6758078122486133229/Sequences.tla (jar:file:/home/neo/RustroverProjects/mac-consistency/tla2tools.jar!/tla2sany/StandardModules/Sequences.tla)
-Parsing file /tmp/tlc-6758078122486133229/FiniteSets.tla (jar:file:/home/neo/RustroverProjects/mac-consistency/tla2tools.jar!/tla2sany/StandardModules/FiniteSets.tla)
-Parsing file /tmp/tlc-6758078122486133229/TLC.tla (jar:file:/home/neo/RustroverProjects/mac-consistency/tla2tools.jar!/tla2sany/StandardModules/TLC.tla)
-Parsing file /tmp/tlc-6758078122486133229/TLCExt.tla (jar:file:/home/neo/RustroverProjects/mac-consistency/tla2tools.jar!/tla2sany/StandardModules/TLCExt.tla)
-Parsing file /tmp/tlc-6758078122486133229/Integers.tla (jar:file:/home/neo/RustroverProjects/mac-consistency/tla2tools.jar!/tla2sany/StandardModules/Integers.tla)
+Parsing file /tmp/tlc-16891485025490785763/_TLCTrace.tla (jar:file:/home/neo/RustroverProjects/mac-consistency/tla/tla2tools.jar!/tla2sany/StandardModules/_TLCTrace.tla)
+Parsing file /tmp/tlc-16891485025490785763/Naturals.tla (jar:file:/home/neo/RustroverProjects/mac-consistency/tla/tla2tools.jar!/tla2sany/StandardModules/Naturals.tla)
+Parsing file /tmp/tlc-16891485025490785763/Sequences.tla (jar:file:/home/neo/RustroverProjects/mac-consistency/tla/tla2tools.jar!/tla2sany/StandardModules/Sequences.tla)
+Parsing file /tmp/tlc-16891485025490785763/FiniteSets.tla (jar:file:/home/neo/RustroverProjects/mac-consistency/tla/tla2tools.jar!/tla2sany/StandardModules/FiniteSets.tla)
+Parsing file /tmp/tlc-16891485025490785763/TLC.tla (jar:file:/home/neo/RustroverProjects/mac-consistency/tla/tla2tools.jar!/tla2sany/StandardModules/TLC.tla)
+Parsing file /tmp/tlc-16891485025490785763/TLCExt.tla (jar:file:/home/neo/RustroverProjects/mac-consistency/tla/tla2tools.jar!/tla2sany/StandardModules/TLCExt.tla)
+Parsing file /tmp/tlc-16891485025490785763/Integers.tla (jar:file:/home/neo/RustroverProjects/mac-consistency/tla/tla2tools.jar!/tla2sany/StandardModules/Integers.tla)
 Semantic processing of module Naturals
 Semantic processing of module Sequences
 Semantic processing of module FiniteSets
@@ -27,42 +27,42 @@ Linting of module Anomalies
 Linting of module TLCExt
 Linting of module _TLCTrace
 Linting of module MC_A3
-Starting... (2026-05-07 20:44:50)
+Starting... (2026-05-08 18:28:25)
 Computing initial states...
-Finished computing initial states: 1 distinct state generated at 2026-05-07 20:44:50.
+Finished computing initial states: 1 distinct state generated at 2026-05-08 18:28:25.
 Error: Invariant CausalCascadeFree is violated.
 Error: The behavior up to this point is:
 State 1: <Initial predicate>
-/\ inflight = (a1 :> [pending |-> FALSE, agent |-> a1, read_set |-> {}, read_values |-> (c1 :> "NULL" @@ e1 :> "NULL"), read_registry |-> {}, planned_tool |-> "NULL", read_time |-> 0, write_set |-> {}, write_values |-> (c1 :> "NULL" @@ e1 :> "NULL"), write_registry |-> {}, write_time |-> 0] @@ a2 :> [pending |-> FALSE, agent |-> a2, read_set |-> {}, read_values |-> (c1 :> "NULL" @@ e1 :> "NULL"), read_registry |-> {}, planned_tool |-> "NULL", read_time |-> 0, write_set |-> {}, write_values |-> (c1 :> "NULL" @@ e1 :> "NULL"), write_registry |-> {}, write_time |-> 0])
+/\ inflight = (a1 :> [pending |-> FALSE, agent |-> a1, read_set |-> {}, read_values |-> (c1 :> "NULL" @@ e1 :> "NULL"), read_registry |-> {}, planned_tool |-> "NULL", read_time |-> 0, write_set |-> {}, write_values |-> (c1 :> "NULL" @@ e1 :> "NULL"), write_registry |-> {}, write_time |-> 0, io |-> <<>>, co |-> <<>>] @@ a2 :> [pending |-> FALSE, agent |-> a2, read_set |-> {}, read_values |-> (c1 :> "NULL" @@ e1 :> "NULL"), read_registry |-> {}, planned_tool |-> "NULL", read_time |-> 0, write_set |-> {}, write_values |-> (c1 :> "NULL" @@ e1 :> "NULL"), write_registry |-> {}, write_time |-> 0, io |-> <<>>, co |-> <<>>])
 /\ registry = {t1}
 /\ memory = (c1 :> "NULL" @@ e1 :> "NULL")
 /\ log = <<>>
 
-State 2: <StartRead(a1) line 58, col 5 to line 75, col 42 of module Memory>
-/\ inflight = (a1 :> [pending |-> TRUE, agent |-> a1, read_set |-> {}, read_values |-> (c1 :> "NULL" @@ e1 :> "NULL"), read_registry |-> {t1}, planned_tool |-> t1, read_time |-> 0, write_set |-> {}, write_values |-> (c1 :> "NULL" @@ e1 :> "NULL"), write_registry |-> {}, write_time |-> 0] @@ a2 :> [pending |-> FALSE, agent |-> a2, read_set |-> {}, read_values |-> (c1 :> "NULL" @@ e1 :> "NULL"), read_registry |-> {}, planned_tool |-> "NULL", read_time |-> 0, write_set |-> {}, write_values |-> (c1 :> "NULL" @@ e1 :> "NULL"), write_registry |-> {}, write_time |-> 0])
+State 2: <StartRead(a1) line 80, col 5 to line 99, col 42 of module Memory>
+/\ inflight = (a1 :> [pending |-> TRUE, agent |-> a1, read_set |-> {c1, e1}, read_values |-> (c1 :> "NULL" @@ e1 :> "NULL"), read_registry |-> {t1}, planned_tool |-> t1, read_time |-> 0, write_set |-> {}, write_values |-> (c1 :> "NULL" @@ e1 :> "NULL"), write_registry |-> {}, write_time |-> 0, io |-> <<>>, co |-> <<>>] @@ a2 :> [pending |-> FALSE, agent |-> a2, read_set |-> {}, read_values |-> (c1 :> "NULL" @@ e1 :> "NULL"), read_registry |-> {}, planned_tool |-> "NULL", read_time |-> 0, write_set |-> {}, write_values |-> (c1 :> "NULL" @@ e1 :> "NULL"), write_registry |-> {}, write_time |-> 0, io |-> <<>>, co |-> <<>>])
 /\ registry = {t1}
 /\ memory = (c1 :> "NULL" @@ e1 :> "NULL")
 /\ log = <<>>
 
-State 3: <StartRead(a2) line 58, col 5 to line 75, col 42 of module Memory>
-/\ inflight = (a1 :> [pending |-> TRUE, agent |-> a1, read_set |-> {}, read_values |-> (c1 :> "NULL" @@ e1 :> "NULL"), read_registry |-> {t1}, planned_tool |-> t1, read_time |-> 0, write_set |-> {}, write_values |-> (c1 :> "NULL" @@ e1 :> "NULL"), write_registry |-> {}, write_time |-> 0] @@ a2 :> [pending |-> TRUE, agent |-> a2, read_set |-> {c1}, read_values |-> (c1 :> "NULL" @@ e1 :> "NULL"), read_registry |-> {t1}, planned_tool |-> t1, read_time |-> 0, write_set |-> {}, write_values |-> (c1 :> "NULL" @@ e1 :> "NULL"), write_registry |-> {}, write_time |-> 0])
-/\ registry = {t1}
-/\ memory = (c1 :> "NULL" @@ e1 :> "NULL")
-/\ log = <<>>
-
-State 4: <CompleteWrite(a2) line 78, col 5 to line 98, col 25 of module Memory>
-/\ inflight = (a1 :> [pending |-> TRUE, agent |-> a1, read_set |-> {}, read_values |-> (c1 :> "NULL" @@ e1 :> "NULL"), read_registry |-> {t1}, planned_tool |-> t1, read_time |-> 0, write_set |-> {}, write_values |-> (c1 :> "NULL" @@ e1 :> "NULL"), write_registry |-> {}, write_time |-> 0] @@ a2 :> [pending |-> FALSE, agent |-> a2, read_set |-> {}, read_values |-> (c1 :> "NULL" @@ e1 :> "NULL"), read_registry |-> {}, planned_tool |-> "NULL", read_time |-> 0, write_set |-> {}, write_values |-> (c1 :> "NULL" @@ e1 :> "NULL"), write_registry |-> {}, write_time |-> 0])
+State 3: <CompleteWrite(a1) line 108, col 5 to line 140, col 25 of module Memory>
+/\ inflight = (a1 :> [pending |-> FALSE, agent |-> a1, read_set |-> {}, read_values |-> (c1 :> "NULL" @@ e1 :> "NULL"), read_registry |-> {}, planned_tool |-> "NULL", read_time |-> 0, write_set |-> {}, write_values |-> (c1 :> "NULL" @@ e1 :> "NULL"), write_registry |-> {}, write_time |-> 0, io |-> <<>>, co |-> <<>>] @@ a2 :> [pending |-> FALSE, agent |-> a2, read_set |-> {}, read_values |-> (c1 :> "NULL" @@ e1 :> "NULL"), read_registry |-> {}, planned_tool |-> "NULL", read_time |-> 0, write_set |-> {}, write_values |-> (c1 :> "NULL" @@ e1 :> "NULL"), write_registry |-> {}, write_time |-> 0, io |-> <<>>, co |-> <<>>])
 /\ registry = {t1}
 /\ memory = (c1 :> "NULL" @@ e1 :> v1)
-/\ log = <<[pending |-> FALSE, agent |-> a2, read_set |-> {c1}, read_values |-> (c1 :> "NULL" @@ e1 :> "NULL"), read_registry |-> {t1}, planned_tool |-> t1, read_time |-> 0, write_set |-> {e1}, write_values |-> (c1 :> "NULL" @@ e1 :> v1), write_registry |-> {t1}, write_time |-> 1]>>
+/\ log = <<[pending |-> FALSE, agent |-> a1, read_set |-> {c1, e1}, read_values |-> (c1 :> "NULL" @@ e1 :> "NULL"), read_registry |-> {t1}, planned_tool |-> t1, read_time |-> 0, write_set |-> {e1}, write_values |-> (c1 :> "NULL" @@ e1 :> v1), write_registry |-> {t1}, write_time |-> 1, io |-> <<<<e1, v1>>>>, co |-> <<<<e1, v1>>>>]>>
 
-State 5: <CompleteWrite(a1) line 78, col 5 to line 98, col 25 of module Memory>
-/\ inflight = (a1 :> [pending |-> FALSE, agent |-> a1, read_set |-> {}, read_values |-> (c1 :> "NULL" @@ e1 :> "NULL"), read_registry |-> {}, planned_tool |-> "NULL", read_time |-> 0, write_set |-> {}, write_values |-> (c1 :> "NULL" @@ e1 :> "NULL"), write_registry |-> {}, write_time |-> 0] @@ a2 :> [pending |-> FALSE, agent |-> a2, read_set |-> {}, read_values |-> (c1 :> "NULL" @@ e1 :> "NULL"), read_registry |-> {}, planned_tool |-> "NULL", read_time |-> 0, write_set |-> {}, write_values |-> (c1 :> "NULL" @@ e1 :> "NULL"), write_registry |-> {}, write_time |-> 0])
+State 4: <StartRead(a1) line 80, col 5 to line 99, col 42 of module Memory>
+/\ inflight = (a1 :> [pending |-> TRUE, agent |-> a1, read_set |-> {}, read_values |-> (c1 :> "NULL" @@ e1 :> "NULL"), read_registry |-> {t1}, planned_tool |-> t1, read_time |-> 1, write_set |-> {}, write_values |-> (c1 :> "NULL" @@ e1 :> "NULL"), write_registry |-> {}, write_time |-> 0, io |-> <<>>, co |-> <<>>] @@ a2 :> [pending |-> FALSE, agent |-> a2, read_set |-> {}, read_values |-> (c1 :> "NULL" @@ e1 :> "NULL"), read_registry |-> {}, planned_tool |-> "NULL", read_time |-> 0, write_set |-> {}, write_values |-> (c1 :> "NULL" @@ e1 :> "NULL"), write_registry |-> {}, write_time |-> 0, io |-> <<>>, co |-> <<>>])
+/\ registry = {t1}
+/\ memory = (c1 :> "NULL" @@ e1 :> v1)
+/\ log = <<[pending |-> FALSE, agent |-> a1, read_set |-> {c1, e1}, read_values |-> (c1 :> "NULL" @@ e1 :> "NULL"), read_registry |-> {t1}, planned_tool |-> t1, read_time |-> 0, write_set |-> {e1}, write_values |-> (c1 :> "NULL" @@ e1 :> v1), write_registry |-> {t1}, write_time |-> 1, io |-> <<<<e1, v1>>>>, co |-> <<<<e1, v1>>>>]>>
+
+State 5: <CompleteWrite(a1) line 108, col 5 to line 140, col 25 of module Memory>
+/\ inflight = (a1 :> [pending |-> FALSE, agent |-> a1, read_set |-> {}, read_values |-> (c1 :> "NULL" @@ e1 :> "NULL"), read_registry |-> {}, planned_tool |-> "NULL", read_time |-> 0, write_set |-> {}, write_values |-> (c1 :> "NULL" @@ e1 :> "NULL"), write_registry |-> {}, write_time |-> 0, io |-> <<>>, co |-> <<>>] @@ a2 :> [pending |-> FALSE, agent |-> a2, read_set |-> {}, read_values |-> (c1 :> "NULL" @@ e1 :> "NULL"), read_registry |-> {}, planned_tool |-> "NULL", read_time |-> 0, write_set |-> {}, write_values |-> (c1 :> "NULL" @@ e1 :> "NULL"), write_registry |-> {}, write_time |-> 0, io |-> <<>>, co |-> <<>>])
 /\ registry = {t1}
 /\ memory = (c1 :> v1 @@ e1 :> v1)
-/\ log = <<[pending |-> FALSE, agent |-> a2, read_set |-> {c1}, read_values |-> (c1 :> "NULL" @@ e1 :> "NULL"), read_registry |-> {t1}, planned_tool |-> t1, read_time |-> 0, write_set |-> {e1}, write_values |-> (c1 :> "NULL" @@ e1 :> v1), write_registry |-> {t1}, write_time |-> 1], [pending |-> FALSE, agent |-> a1, read_set |-> {}, read_values |-> (c1 :> "NULL" @@ e1 :> "NULL"), read_registry |-> {t1}, planned_tool |-> t1, read_time |-> 0, write_set |-> {c1}, write_values |-> (c1 :> v1 @@ e1 :> "NULL"), write_registry |-> {t1}, write_time |-> 2]>>
+/\ log = <<[pending |-> FALSE, agent |-> a1, read_set |-> {c1, e1}, read_values |-> (c1 :> "NULL" @@ e1 :> "NULL"), read_registry |-> {t1}, planned_tool |-> t1, read_time |-> 0, write_set |-> {e1}, write_values |-> (c1 :> "NULL" @@ e1 :> v1), write_registry |-> {t1}, write_time |-> 1, io |-> <<<<e1, v1>>>>, co |-> <<<<e1, v1>>>>], [pending |-> FALSE, agent |-> a1, read_set |-> {}, read_values |-> (c1 :> "NULL" @@ e1 :> "NULL"), read_registry |-> {t1}, planned_tool |-> t1, read_time |-> 1, write_set |-> {c1}, write_values |-> (c1 :> v1 @@ e1 :> "NULL"), write_registry |-> {t1}, write_time |-> 2, io |-> <<<<c1, v1>>>>, co |-> <<<<c1, v1>>>>]>>
 
-9897 states generated, 6840 distinct states found, 6405 states left on queue.
+26428 states generated, 25516 distinct states found, 24586 states left on queue.
 The depth of the complete state graph search is 5.
-Finished in 00s at (2026-05-07 20:44:50)
-Trace exploration spec path: tla/MC_A3_TTrace_1778168689.tla
+Finished in 01s at (2026-05-08 18:28:26)
+Trace exploration spec path: ./MC_A3_TTrace_1778246905.tla
