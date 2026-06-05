@@ -8,37 +8,46 @@
 (*                                                                         *)
 (* The paper's three-way (L)/(V)/(I) split is operational; at the trace   *)
 (* level (V) and (I) coincide. The theorem below is the trace-level       *)
-(* version; the paper §5.5.1 should add a paragraph explaining the        *)
+(* version; the paper section 5.5.1 should add a paragraph explaining the *)
 (* operational-vs-trace collapse.                                          *)
 (*                                                                         *)
-(* The proof additionally requires a non-overlapping property of M: no    *)
-(* two operations of the same agent overlap in [read_time, write_time].  *)
-(* This is enforced by the inv-OneInFlight invariant of Memory.tla and    *)
-(* lifted to histories via the NonOverlappingAgent predicate below. The   *)
-(* lifting itself is an inductive invariance proof on Memory.tla's Spec. *)
+(* The proof requires two well-formedness properties of M, both lifted    *)
+(* from Memory.tla's Spec to histories as hypotheses (each discharged by  *)
+(* a separate inductive invariance proof on Memory.Spec):                  *)
+(*                                                                         *)
+(*   1. NonOverlappingAgent(h): no two operations of the same agent       *)
+(*      overlap in [read_time, write_time]. History-level lifting of the  *)
+(*      inv-OneInFlight invariant.                                         *)
+(*                                                                         *)
+(*   2. MonotonicOp(h): each operation reads no later than it writes      *)
+(*      (read_time <= write_time). In M, read_time is fixed at StartRead  *)
+(*      (an earlier Len(log)) and write_time at CompleteWrite (Len(log)+1 *)
+(*      later), so read_time < write_time holds. OpRecord types both as   *)
+(*      Nat without this ordering, so it is supplied as a hypothesis;     *)
+(*      without it the same-agent overlap contradiction in <1>5 fails.    *)
 (***************************************************************************)
 
 EXTENDS Memory, Anomalies, Mechanisms, TLAPS
 
-\* History-level lifting of inv-OneInFlight.
 NonOverlappingAgent(h) ==
     \A i, j \in 1..Len(h) :
         (i # j /\ h[i].agent = h[j].agent)
         => (h[i].write_time <= h[j].read_time
             \/ h[j].write_time <= h[i].read_time)
 
-\* The trace-level lower bound. Note the NonOverlappingAgent hypothesis,
-\* which is a property of M established separately by an inductive
-\* invariance proof on Memory.Spec (see Memory.tla's NonOverlappingInv).
+MonotonicOp(h) ==
+    \A m \in 1..Len(h) : h[m].read_time <= h[m].write_time
+
 THEOREM A1LowerBoundTrace ==
     \A h \in Seq(OpRecord) :
-        (NonOverlappingAgent(h) /\ ~StaleGeneration(h))
+        (NonOverlappingAgent(h) /\ MonotonicOp(h) /\ ~StaleGeneration(h))
         =>
         \A i \in 1..Len(h) :
             A1Mechanism(h, i)
 PROOF
     <1>1. SUFFICES ASSUME NEW h \in Seq(OpRecord),
                           NonOverlappingAgent(h),
+                          MonotonicOp(h),
                           ~StaleGeneration(h),
                           NEW i \in 1..Len(h),
                           ~A1Mechanism(h, i)
@@ -62,10 +71,18 @@ PROOF
                 h[k].write_values[c] # h[i].read_values[c]
         BY <1>3
     <1>5. h[i].agent # h[k].agent
-        \* By NonOverlappingAgent: if same agent, intervals must not
-        \* overlap, but k's write_time is strictly between i's read_time
-        \* and write_time, so they overlap, contradicting same agent.
-        BY <1>1, <1>4 DEF NonOverlappingAgent
+        <2> SUFFICES ASSUME h[i].agent = h[k].agent
+                     PROVE FALSE
+            OBVIOUS
+        <2>1. h[i] \in OpRecord /\ h[k] \in OpRecord
+            BY <1>1, <1>4
+        <2>2. h[k].read_time <= h[k].write_time
+            BY <1>1, <1>4 DEF MonotonicOp
+        <2>3. h[i].write_time <= h[k].read_time
+              \/ h[k].write_time <= h[i].read_time
+            BY <1>1, <1>4 DEF NonOverlappingAgent
+        <2> QED
+            BY <2>1, <2>2, <2>3, <1>4 DEF OpRecord
     <1>6. StaleGeneration(h)
         BY <1>4, <1>5 DEF StaleGeneration
     <1> QED BY <1>1, <1>6
