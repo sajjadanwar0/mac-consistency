@@ -17,6 +17,14 @@
 (*   `Refinement.tla` discharges the refinement obligation                *)
 (*   CodeCRDT!Spec => phi!Memory!Spec.                                    *)
 (*                                                                         *)
+(*   The projection targets Memory with AllowSkew <- TRUE. CodeCRDT      *)
+(*   reads are served from a possibly-stale replica (syncClock[a] may be *)
+(*   behind Len(log)), so a read value can differ from the latest-write- *)
+(*   wins global projection. The skew-permitting Memory model admits     *)
+(*   these stale reads as a superset of behaviours, which is what makes  *)
+(*   the refinement hold; it is also precisely why CodeCRDT realises L_1 *)
+(*   (admits A_1 staleness) but not L_2.                                  *)
+(*                                                                         *)
 (* TLC harnesses MC_CodeCRDT_RYW.tla and MC_CodeCRDT_AdmitsA1.tla check  *)
 (* invariants on this spec directly. Theorem 6.1 (CodeCRDT level         *)
 (* placement at L_1 but not L_2) is established by:                       *)
@@ -140,12 +148,16 @@ phiMemory    == GlobalMemory
 
 \* Memory's state machine instantiated under phi. The refinement theorem
 \* CodeCRDT!Spec => phi!Memory!Spec is discharged in Refinement.tla.
+\* AllowSkew <- TRUE: CodeCRDT serves reads from a possibly-stale replica,
+\* so the projected reads need not equal the latest-write-wins memory; the
+\* skew-permitting Memory model admits them.
 MemoryProjection ==
     INSTANCE Memory WITH
-        log      <- phiLog,
-        inflight <- phiInflight,
-        registry <- phiRegistry,
-        memory   <- phiMemory
+        log       <- phiLog,
+        inflight  <- phiInflight,
+        registry  <- phiRegistry,
+        memory    <- phiMemory,
+        AllowSkew <- TRUE
 
 \* ------- Inline anomaly predicates (over the global log) -------
 

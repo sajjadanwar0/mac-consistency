@@ -5,7 +5,7 @@
   Four formalised concurrency anomaly predicates over operation histories:
     A_1  StaleGeneration         — intervening write invalidates a read
     A_2  PhantomTool              — registry mutation removes planned tool
-    A_3  CausalCascade            — basis of an external commit retracted
+    A_3  CausalCascade            -- committed read unsupported by any committed write
     A_6  ToolEffectReordering     — co != io within a single operation
 
   A_4 (SplitView) is vacuous in the present model and kept as a
@@ -43,14 +43,21 @@ PhantomTool(h) ==
 (* A_3: CausalCascade                                                   *)
 ------------------------------------------------------------------------
 CausalCascade(h) ==
+    \* A_3 is the trace footprint of an uncompensated causal cascade: a
+    \* committed operation recorded a read of c = v (v # NULL) that no
+    \* surviving committed write produced at or before that read. When a
+    \* writer is rolled back (compensated), the dependent's recorded read
+    \* is left unsupported -- exactly this predicate. It is the predicate
+    \* the verified Verus detector (a3_witness, lib_detector_equivalence.rs)
+    \* is proved sound and complete against.
     \E j \in 1..Len(h) :
-        /\ h[j].write_set \cap ExternalCells # {}
-        /\ \E c \in h[j].read_set, k \in 1..Len(h) :
-            /\ c \notin ExternalCells
-            /\ k # j
-            /\ c \in h[k].write_set
-            /\ h[k].write_time > h[j].write_time
-            /\ h[k].write_values[c] # h[j].read_values[c]
+        \E c \in h[j].read_set :
+            /\ h[j].read_values[c] # NULL
+            /\ \A k \in 1..Len(h) :
+                  ~( /\ k # j
+                     /\ c \in h[k].write_set
+                     /\ h[k].write_time =< h[j].read_time
+                     /\ h[k].write_values[c] = h[j].read_values[c] )
 
 ------------------------------------------------------------------------
 (* A_4: SplitView                                                       *)

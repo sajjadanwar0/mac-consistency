@@ -6,11 +6,12 @@
 
 EXTENDS Naturals, Sequences, FiniteSets, TLC
 
-CONSTANTS Agents, Cells, Values, Tools, NULL, MaxOps, ExternalCells
+CONSTANTS Agents, Cells, Values, Tools, NULL, MaxOps, ExternalCells, AllowSkew
 
 ASSUME
     /\ NULL \notin Values
     /\ ExternalCells \subseteq Cells
+    /\ AllowSkew \in BOOLEAN
 
 VARIABLES log, inflight, registry, memory
 
@@ -93,12 +94,19 @@ Init ==
 StartRead(a) ==
     /\ ~inflight[a].pending
     /\ Len(log) < MaxOps
-    /\ \E rs \in SUBSET Cells, pt \in registry \cup {NULL} :
-        inflight' = [inflight EXCEPT ![a] = [
+    \* AllowSkew = FALSE: rv is forced to `memory`, i.e. the original
+    \* grounded read (every model that sets AllowSkew = FALSE is identical
+    \* to before). AllowSkew = TRUE: the agent may record an unsupported
+    \* value -- a stale/skewed view (commit-log skew) -- the trace footprint
+    \* the causal-cascade anomaly (A_3) detects.
+    /\ \E rs \in SUBSET Cells, pt \in registry \cup {NULL},
+          rv \in [Cells -> Values \cup {NULL}] :
+        /\ (~AllowSkew) => (rv = memory)
+        /\ inflight' = [inflight EXCEPT ![a] = [
             pending        |-> TRUE,
             agent          |-> a,
             read_set       |-> rs,
-            read_values    |-> memory,
+            read_values    |-> rv,
             read_registry  |-> registry,
             planned_tool   |-> pt,
             read_time      |-> Len(log),

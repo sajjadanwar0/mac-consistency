@@ -32,3 +32,16 @@ venv/
 *.swp
 *~
 .DS_Store
+
+# --- TLC model-checker output ---
+*_TTrace_*.tla
+*_TTrace_*.bin
+*.dot
+states/
+**/states/
+*.st
+
+# --- TLAPS proof cache ---
+.tlacache/
+**/.tlacache/
+*.tlaps/
