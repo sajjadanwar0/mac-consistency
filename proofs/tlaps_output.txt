@@ -1,5 +1,5 @@
-(* loading fingerprints in ".tlacache/Hierarchy.tlaps/fingerprints" *)
-(* created new ".tlacache/Hierarchy.tlaps/Hierarchy.thy" *)
-(* fingerprints written in ".tlacache/Hierarchy.tlaps/fingerprints" *)
-File "./Hierarchy.tla", line 1, character 1 to line 124, character 80:
-[INFO]: All 21 obligations proved.
+(* fingerprints file ".tlacache/A1LowerBound.tlaps/fingerprints" removed *)
+(* created new ".tlacache/A1LowerBound.tlaps/A1LowerBound.thy" *)
+(* fingerprints written in ".tlacache/A1LowerBound.tlaps/fingerprints" *)
+File "./proofs/A1LowerBound.tla", line 1, character 1 to line 105, character 74:
+[INFO]: All 28 obligations proved.
