@@ -1,46 +1,105 @@
 --------------------------- MODULE A1LowerBound ---------------------------
-(* Theorem 5.1 (Generation-phase lower bound for A_1).                    *)
-(* The formal statement, mechanism predicates, and required hypotheses    *)
-(* (WellFormedHistory, NonOverlappingAgent) are defined in TLA+ here.     *)
-(* The discharge depends on a four-way arithmetic case split combining   *)
-(* NonOverlappingAgent's disjunction with WellFormedHistory and the      *)
-(* PICK-bound interval; this case split sits in the gap between Zenon's   *)
-(* first-order capability and the SMT backend's auto-dispatch in this    *)
-(* TLAPS configuration. Mechanisation deferred; the operational content   *)
-(* (Theorem 5.1's design-space claim) is established by the level         *)
-(* definitions plus the Mechanisms.tla predicates.                       *)
+(***************************************************************************)
+(* Theorem 5.1 (Generation-phase lower bound for A_1) mechanised at the   *)
+(* trace level.                                                            *)
+(*                                                                         *)
+(* STATEMENT. For any history h with ~StaleGeneration(h), every operation *)
+(* i satisfies ReadSetLock(h, i) \/ ValueAgreement(h, i).                  *)
+(*                                                                         *)
+(* The paper's three-way (L)/(V)/(I) split is operational; at the trace   *)
+(* level (V) and (I) coincide. The theorem below is the trace-level       *)
+(* version; the paper section 5.5.1 should add a paragraph explaining the *)
+(* operational-vs-trace collapse.                                          *)
+(*                                                                         *)
+(* The proof requires two well-formedness properties of M, both lifted    *)
+(* from Memory.tla's Spec to histories as hypotheses (each discharged by  *)
+(* a separate inductive invariance proof on Memory.Spec):                  *)
+(*                                                                         *)
+(*   1. NonOverlappingAgent(h): no two operations of the same agent       *)
+(*      overlap in [read_time, write_time]. This is the history-level     *)
+(*      lifting of the inv-OneInFlight invariant.                          *)
+(*                                                                         *)
+(*   2. MonotonicOp(h): each operation reads no later than it writes      *)
+(*      (read_time <= write_time). In M, read_time is fixed at StartRead  *)
+(*      (an earlier value of Len(log)) and write_time at CompleteWrite    *)
+(*      (Len(log)+1 at a later point), so read_time < write_time holds.   *)
+(*      OpRecord types both fields as Nat without this ordering, so it    *)
+(*      must be supplied as a hypothesis; without it the same-agent       *)
+(*      overlap contradiction in step <1>5 does not go through.            *)
 (***************************************************************************)
 
 EXTENDS Memory, Anomalies, Mechanisms, TLAPS
 
-\* Operations have read before write. Holds for any history produced by
-\* Memory.Spec (CompleteWrite sets write_time = Len(log)+1 strictly after
-\* read_time was captured at StartRead). Stated as a hypothesis on h.
-WellFormedHistory(h) ==
-    \A i \in 1..Len(h) : h[i].read_time < h[i].write_time
-
-\* No two operations of the same agent overlap. Lifted from Memory.tla's
-\* inv-OneInFlight invariant to history form.
+\* History-level lifting of inv-OneInFlight.
 NonOverlappingAgent(h) ==
     \A i, j \in 1..Len(h) :
         (i # j /\ h[i].agent = h[j].agent)
         => (h[i].write_time <= h[j].read_time
             \/ h[j].write_time <= h[i].read_time)
 
+\* History-level well-formedness: each operation reads no later than it
+\* writes. A property of M (read_time fixed at StartRead strictly before
+\* the CompleteWrite that sets write_time), lifted alongside the above.
+MonotonicOp(h) ==
+    \A m \in 1..Len(h) : h[m].read_time <= h[m].write_time
+
+\* The trace-level lower bound. Note the NonOverlappingAgent and
+\* MonotonicOp hypotheses, both properties of M established separately by
+\* inductive invariance proofs on Memory.Spec.
 THEOREM A1LowerBoundTrace ==
     \A h \in Seq(OpRecord) :
-        ( WellFormedHistory(h)
-          /\ NonOverlappingAgent(h)
-          /\ ~StaleGeneration(h) )
+        (NonOverlappingAgent(h) /\ MonotonicOp(h) /\ ~StaleGeneration(h))
         =>
-        \A i \in 1..Len(h) : A1Mechanism(h, i)
+        \A i \in 1..Len(h) :
+            A1Mechanism(h, i)
 PROOF
-    OMITTED  \* Discharge: PICK k from ~ValueAgreement(h, i); show
-             \* h[i].agent # h[k].agent by case-splitting NonOverlapping
-             \* on h[i].agent = h[k].agent and using WellFormedHistory to
-             \* contradict the strict interval h[i].read_time 
-             \* h[k].write_time < h[i].write_time. Each step is sound; the
-             \* combined arithmetic and case-split exceeds TLAPS auto-
-             \* dispatch capability without explicit backend annotation.
+    <1>1. SUFFICES ASSUME NEW h \in Seq(OpRecord),
+                          NonOverlappingAgent(h),
+                          MonotonicOp(h),
+                          ~StaleGeneration(h),
+                          NEW i \in 1..Len(h),
+                          ~A1Mechanism(h, i)
+                   PROVE FALSE
+        OBVIOUS
+    <1>2. /\ ~ReadSetLock(h, i)
+          /\ ~ValueAgreement(h, i)
+        BY <1>1 DEF A1Mechanism
+    <1>3. \E k \in 1..Len(h) :
+            /\ k # i
+            /\ h[k].write_time > h[i].read_time
+            /\ h[k].write_time < h[i].write_time
+            /\ \E c \in h[i].read_set \cap h[k].write_set :
+                h[k].write_values[c] # h[i].read_values[c]
+        BY <1>2 DEF ReadSetLock, ValueAgreement
+    <1>4. PICK k \in 1..Len(h) :
+            /\ k # i
+            /\ h[k].write_time > h[i].read_time
+            /\ h[k].write_time < h[i].write_time
+            /\ \E c \in h[i].read_set \cap h[k].write_set :
+                h[k].write_values[c] # h[i].read_values[c]
+        BY <1>3
+    <1>5. h[i].agent # h[k].agent
+        \* Suppose same agent. NonOverlappingAgent then forces i and k to
+        \* be time-disjoint: write_time_i <= read_time_k OR
+        \* write_time_k <= read_time_i. The second is killed by
+        \* write_time_k > read_time_i (<1>4). The first is killed by
+        \* read_time_k <= write_time_k (MonotonicOp) and
+        \* write_time_k < write_time_i (<1>4), giving read_time_k <
+        \* write_time_i, i.e. ~(write_time_i <= read_time_k). Contradiction.
+        <2> SUFFICES ASSUME h[i].agent = h[k].agent
+                     PROVE FALSE
+            OBVIOUS
+        <2>1. h[i] \in OpRecord /\ h[k] \in OpRecord
+            BY <1>1, <1>4
+        <2>2. h[k].read_time <= h[k].write_time
+            BY <1>1, <1>4 DEF MonotonicOp
+        <2>3. h[i].write_time <= h[k].read_time
+              \/ h[k].write_time <= h[i].read_time
+            BY <1>1, <1>4 DEF NonOverlappingAgent
+        <2> QED
+            BY <2>1, <2>2, <2>3, <1>4 DEF OpRecord
+    <1>6. StaleGeneration(h)
+        BY <1>4, <1>5 DEF StaleGeneration
+    <1> QED BY <1>1, <1>6
 
 ==========================================================================

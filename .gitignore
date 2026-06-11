@@ -8,40 +8,31 @@
 states/
 *_TTrace_*.tla
 tlc_results/
-
 # backups (local snapshots, not history)
 .backup*/
-
 # run logs / results
 *.log
-
 # archives
 *.zip
 *.tar
 *.tar.gz
-
 # Python
 __pycache__/
 *.py[cod]
 .venv/
 venv/
-
 # editors / OS
 .idea/
 .vscode/
 *.swp
 *~
 .DS_Store
-
 # --- TLC model-checker output ---
-*_TTrace_*.tla
 *_TTrace_*.bin
 *.dot
-states/
 **/states/
 *.st
-
 # --- TLAPS proof cache ---
-.tlacache/
 **/.tlacache/
 *.tlaps/
+tla2tools.jar
