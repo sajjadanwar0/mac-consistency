@@ -25,6 +25,16 @@ InitialMemory == [c \in Cells |-> NULL]
 \* Anomalies.tla, Levels.tla, and the proofs/ files to quantify over
 \* histories as `\A h \in Seq(OpRecord)`. This was missing from the
 \* artifact's Memory.tla and the cause of the v5 TLAPS error.
+\*
+\* v5_3 A_3 redefinition (paper Definition 3 / Sec. 3.3): records carry
+\* two additional fields, `aborted` (compensation flag) and `preds` (the
+\* causal closure of operations whose committed writes this op observed).
+\* The state machine below never aborts and never populates preds — it
+\* sets the inert defaults aborted = FALSE, preds = {} — so the precise
+\* CausalCascade predicate is type-correct over every Memory history and
+\* (correctly) never fires on an abort-free machine. The abort-annotated
+\* witness for Definition 3 is the standalone harness A3_witness_check.tla;
+\* the flat-trace residue witness over THIS machine is MC_A3.tla.
 OpRecord == [
     pending        : BOOLEAN,
     agent          : Agents,
@@ -38,7 +48,9 @@ OpRecord == [
     write_registry : SUBSET Tools,
     write_time     : Nat,
     io             : Seq(Cells \X (Values \cup {NULL})),
-    co             : Seq(Cells \X (Values \cup {NULL}))
+    co             : Seq(Cells \X (Values \cup {NULL})),
+    aborted        : BOOLEAN,
+    preds          : SUBSET Nat
 ]
 
 EmptyOp(a) == [
@@ -54,7 +66,9 @@ EmptyOp(a) == [
     write_registry |-> {},
     write_time     |-> 0,
     io             |-> <<>>,
-    co             |-> <<>>
+    co             |-> <<>>,
+    aborted        |-> FALSE,
+    preds          |-> {}
 ]
 
 \* Bijections {1..|S|} -> S; used to enumerate orderings of a finite set.
@@ -98,7 +112,7 @@ StartRead(a) ==
     \* grounded read (every model that sets AllowSkew = FALSE is identical
     \* to before). AllowSkew = TRUE: the agent may record an unsupported
     \* value -- a stale/skewed view (commit-log skew) -- the trace footprint
-    \* the causal-cascade anomaly (A_3) detects.
+    \* the causal-cascade residue (A_3 flat-trace detector) detects.
     /\ \E rs \in SUBSET Cells, pt \in registry \cup {NULL},
           rv \in [Cells -> Values \cup {NULL}] :
         /\ (~AllowSkew) => (rv = memory)
@@ -115,7 +129,9 @@ StartRead(a) ==
             write_registry |-> {},
             write_time     |-> 0,
             io             |-> <<>>,
-            co             |-> <<>>]]
+            co             |-> <<>>,
+            aborted        |-> FALSE,
+            preds          |-> {}]]
     /\ UNCHANGED <<log, registry, memory>>
 
 \* CompleteWrite(a): commit pending operation atomically.
@@ -145,7 +161,9 @@ CompleteWrite(a) ==
                             write_registry |-> registry,
                             write_time     |-> Len(log) + 1,
                             io             |-> ioSeq,
-                            co             |-> coSeq]
+                            co             |-> coSeq,
+                            aborted        |-> FALSE,
+                            preds          |-> {}]
                     IN  /\ log'      = Append(log, newOp)
                         /\ memory'   = [c \in Cells |->
                                 IF c \in ws THEN wv[c] ELSE memory[c]]
