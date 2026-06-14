@@ -1,37 +1,4 @@
 ---- MODULE CodeCRDT ----
-(***************************************************************************)
-(* CodeCRDT operational model with explicit refinement mapping to         *)
-(* Memory.tla.                                                             *)
-(*                                                                         *)
-(* Each agent maintains a local replica computed from a prefix of the     *)
-(* global log indexed by syncClock[a]. StartRead populates rv from the   *)
-(* replica; CompleteWrite appends to the log AND advances the writing    *)
-(* agent's syncClock (local-first apply, the defining property of state- *)
-(* based CRDTs); SyncReplica monotonically advances syncClock to model   *)
-(* async merge from other agents.                                         *)
-(*                                                                         *)
-(* REFINEMENT. The mapping phi sends a CodeCRDT state                    *)
-(*   (log, inflight, registry, syncClock) to a Memory state              *)
-(*   (log, inflight, registry, memory) where memory is the latest-write- *)
-(*   wins projection of the log. This module declares the projection;    *)
-(*   `Refinement.tla` discharges the refinement obligation                *)
-(*   CodeCRDT!Spec => phi!Memory!Spec.                                    *)
-(*                                                                         *)
-(*   The projection targets Memory with AllowSkew <- TRUE. CodeCRDT      *)
-(*   reads are served from a possibly-stale replica (syncClock[a] may be *)
-(*   behind Len(log)), so a read value can differ from the latest-write- *)
-(*   wins global projection. The skew-permitting Memory model admits     *)
-(*   these stale reads as a superset of behaviours, which is what makes  *)
-(*   the refinement hold; it is also precisely why CodeCRDT realises L_1 *)
-(*   (admits A_1 staleness) but not L_2.                                  *)
-(*                                                                         *)
-(* TLC harnesses MC_CodeCRDT_RYW.tla and MC_CodeCRDT_AdmitsA1.tla check  *)
-(* invariants on this spec directly. Theorem 6.1 (CodeCRDT level         *)
-(* placement at L_1 but not L_2) is established by:                       *)
-(*   - vacuity of LostSelfWrite under CodeCRDT.Spec (TLC, RYW config);    *)
-(*   - violation of StaleGenerationFree under CodeCRDT.Spec (TLC, AdmitsA1*)
-(*     config).                                                           *)
-(***************************************************************************)
 
 EXTENDS Naturals, Sequences, FiniteSets, TLC
 
@@ -40,8 +7,6 @@ CONSTANTS Agents, Cells, Values, Tools, NULL, MaxOps, ExternalCells
 VARIABLES log, inflight, syncClock, registry
 
 vars == <<log, inflight, syncClock, registry>>
-
-\* ------- Helpers (must match Memory.tla shapes for refinement) -------
 
 InitialMemory == [c \in Cells |-> NULL]
 
@@ -55,7 +20,6 @@ EmptyOp(a) == [
     io |-> <<>>, co |-> <<>>
 ]
 
-\* Apply log entries log[k]..log[n] forward over an initial state.
 RECURSIVE ApplyForward(_, _, _)
 ApplyForward(state, k, n) ==
     IF k > n THEN state
@@ -66,14 +30,9 @@ ApplyForward(state, k, n) ==
                 ELSE state[c]]
          IN ApplyForward(newState, k + 1, n)
 
-\* Agent-local replica: the latest-write-wins projection of log[1..syncClock[a]].
 Replica(a) == ApplyForward(InitialMemory, 1, syncClock[a])
 
-\* Global memory projection (latest-write-wins over the entire log).
-\* This is the phi-image of CodeCRDT state in Memory's state space.
 GlobalMemory == ApplyForward(InitialMemory, 1, Len(log))
-
-\* ------- State machine -------
 
 Init ==
     /\ log = <<>>
@@ -136,21 +95,11 @@ Next ==
 
 Spec == Init /\ [][Next]_vars
 
-\* ------- Refinement mapping phi (CodeCRDT state -> Memory state) -------
-\* phi keeps log, inflight, registry unchanged and projects syncClock-
-\* parameterised replicas to the single global memory variable.
-\* Memory.tla's variables are: log, inflight, registry, memory.
-
 phiLog       == log
 phiInflight  == inflight
 phiRegistry  == registry
 phiMemory    == GlobalMemory
 
-\* Memory's state machine instantiated under phi. The refinement theorem
-\* CodeCRDT!Spec => phi!Memory!Spec is discharged in Refinement.tla.
-\* AllowSkew <- TRUE: CodeCRDT serves reads from a possibly-stale replica,
-\* so the projected reads need not equal the latest-write-wins memory; the
-\* skew-permitting Memory model admits them.
 MemoryProjection ==
     INSTANCE Memory WITH
         log       <- phiLog,
@@ -158,8 +107,6 @@ MemoryProjection ==
         registry  <- phiRegistry,
         memory    <- phiMemory,
         AllowSkew <- TRUE
-
-\* ------- Inline anomaly predicates (over the global log) -------
 
 LostSelfWrite ==
     \E i, j \in 1..Len(log):

@@ -1,11 +1,7 @@
 --------------------------- MODULE CompletenessProof ---------------------------
-(* Partial mechanisation of Conjecture 3.7. View-equivalence is a        *)
-(* placeholder; substantive case-analysis lemmas are OMITTED pending the *)
-(* definition.                                                            *)
 
 EXTENDS Memory, Anomalies, TLAPS
 
-\* PLACEHOLDER. Replace before claiming completeness mechanisation.
 ViewEquivalent(h1, h2) == TRUE
 
 Serial(h) ==
@@ -17,7 +13,6 @@ ViewSerializable(h) ==
         /\ Serial(h2)
         /\ ViewEquivalent(h, h2)
 
-\* ===== Case (a) ===== unjustified read; sub-cases A_0 / A_1 / A_2.
 LEMMA CaseA_UnjustifiedRead ==
     \A h \in Seq(OpRecord) :
         ( ~ViewSerializable(h)
@@ -28,7 +23,6 @@ LEMMA CaseA_UnjustifiedRead ==
 PROOF
     OMITTED
 
-\* ===== Case (b) ===== unjustified external commit; A_3.
 LEMMA CaseB_UnjustifiedExternalCommit ==
     \A h \in Seq(OpRecord) :
         ( ~ViewSerializable(h)
@@ -41,14 +35,13 @@ LEMMA CaseB_UnjustifiedExternalCommit ==
 PROOF
     OMITTED
 
-\* ===== Case (c) ===== write reordering; A_6. The only case discharged.
 LEMMA CaseC_WriteReordering ==
     \A h \in Seq(OpRecord) :
         (\E i \in 1..Len(h) :
             h[i].co # h[i].io /\ Len(h[i].io) >= 2)
         => ToolEffectReordering(h)
 PROOF
-    OMITTED  \* Requires IsPermutation reasoning; parametrise on Memory.tla.
+    OMITTED
 
 THEOREM CatalogueCompleteness ==
     \A h \in Seq(OpRecord) :

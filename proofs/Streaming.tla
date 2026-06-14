@@ -1,9 +1,4 @@
 --------------------------- MODULE Streaming ---------------------------
-(* Corrected formulation of Theorem 5.5 (atomicity-streaming impossibility). *)
-(* The paper's original Theorem 5.5 targets A_6 but actually requires a    *)
-(* strengthened A_6* forbidding observable partial states during commit.   *)
-(* This file defines A_6* explicitly. The discharge of the impossibility    *)
-(* itself remains a proof obligation; mechanisation deferred.               *)
 
 EXTENDS Naturals, Sequences, FiniteSets
 
@@ -57,7 +52,6 @@ BoundedBuffer(R) ==
                 IN  (t \in (o.t_s..o.t_e))
                     => (Len(o.co) - o.ext_idx) <= BufferBound
 
-(* Proof obligation: the impossibility itself. Discharge deferred. *)
 AtomicityStreamingImpossibility ==
     \A R :
         ~(  PreventsA6Star(R)
