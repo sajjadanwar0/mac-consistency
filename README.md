@@ -2,7 +2,7 @@
 
 This artifact accompanies the paper *Verified Detection and Prevention of
 Concurrency Anomalies in Multi-Agent Large Language Model Systems*
-(arXiv:2606.xxxxx). It comprises three repositories:
+(arXiv:2606.17182). It comprises three repositories:
 
 | Repository | Contents |
 |---|---|
