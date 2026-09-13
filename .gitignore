@@ -1,38 +1,57 @@
-# Rust / Cargo
+# ---------- Rust / Cargo ----------
 /target/
 **/target/
 
-# TLA+ / TLAPS / TLC
+# ---------- TLA+ / TLAPS / TLC ----------
 .tlacache/
+**/.tlacache/
 *.toolbox/
+*.tlaps/
 states/
+**/states/
 *_TTrace_*.tla
+*_TTrace_*.bin
+*.dot
+*.st
 tlc_results/
-# backups (local snapshots, not history)
-.backup*/
-# run logs / results
+# tla2tools.jar is fetched, not vendored: lattice16_maxops3.sh downloads
+# it when TLA_TOOLS is unset.
+tla2tools.jar
+
+# ---------- TLC scratch: regenerable run trees ----------
+# The generated .cfg/.tla/.log per point are reproducible from the
+# scripts; the RESULTS JSON is the evidence and is tracked.
+tla/lattice16_runs/
+tla/lattice16_maxops3_runs/
+tla/lattice16_quick/
+tla/mo3/
 *.log
-# archives
-*.zip
-*.tar
-*.tar.gz
-# Python
+
+# ---------- Delivery scripts: process, not artifact ----------
+[0-9]*_*.sh
+tla/[0-9]*_*.sh
+
+# ---------- Python ----------
 __pycache__/
 *.py[cod]
 .venv/
 venv/
-# editors / OS
+
+# ---------- Archives, editors, OS ----------
+*.zip
+*.tar
+*.tar.gz
 .idea/
 .vscode/
 *.swp
 *~
 .DS_Store
-# --- TLC model-checker output ---
-*_TTrace_*.bin
-*.dot
-**/states/
-*.st
-# --- TLAPS proof cache ---
-**/.tlacache/
-*.tlaps/
-tla2tools.jar
+
+# ---------- backups (local snapshots, not history) ----------
+.backup*/
+
+# ---------- NOT IGNORED, DELIBERATELY ----------
+# tla/lattice16_results.reference.json        the 64-point matrix at MaxOps=2
+# tla/lattice16_maxops3_results.json          the 16 NoA3 points at MaxOps=3
+# tla/*.tla  tla/*.cfg  tla/*.sh  tla/*.py    specs, configs, harnesses
+# A published TLC figure whose results file is not in this tree is a defect.
