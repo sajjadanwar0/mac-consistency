@@ -55,3 +55,11 @@ venv/
 # tla/lattice16_maxops3_results.json          the 16 NoA3 points at MaxOps=3
 # tla/*.tla  tla/*.cfg  tla/*.sh  tla/*.py    specs, configs, harnesses
 # A published TLC figure whose results file is not in this tree is a defect.
+
+# TLC scratch
+lattice16_runs/
+v2_runs/
+a1lb_runs/
+mkcfg_v2.py
+NN.tla
+NN.cfg
