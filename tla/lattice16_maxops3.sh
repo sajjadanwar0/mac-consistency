@@ -10,12 +10,13 @@
 # MaxOps=2 the G3 guard's Closure() never adds anything beyond the direct
 # predecessor and A3's characteristic case is never reached.
 #
-# WHY Cells={c1} IS SOUND HERE.  Anomalies.tla defines
-#     CausalCascade(h) == \E j, p : ~h[j].aborted
+# WHY Cells={c1} IS SOUND HERE.  Anomalies.tla defines (round 23,
+# 2026-09-15: A3 is an externalized dependent of an aborted operation)
+#     CausalCascade(h) == \E j, p : h[j].externalized
 #                                /\ p \in h[j].preds
 #                                /\ h[p].aborted
-# which ranges over abort flags and predecessor sets and never over
-# cells.  Restricting to one cell cannot remove a CausalCascade witness,
+# which ranges over externalization and abort flags and predecessor sets
+# and never over cells.  Restricting to one cell cannot remove a CausalCascade witness,
 # and it cuts the state space enough that MaxOps=3 closes exhaustively.
 # (At Cells={c1,c2}, MaxOps=3 does not close: 8.37M distinct states after
 # four minutes on one worker, still growing at depth 8.)  The restriction
@@ -47,14 +48,31 @@ if [ ! -f "$JAR" ]; then
   done
 fi
 [ -f "$JAR" ] || { echo "FAIL: tla2tools.jar not found and could not be fetched; set TLA_TOOLS" >&2; exit 1; }
+# 2026-09-15 round 23: java runs inside $OUT, so the jar path must not be
+# relative. OVERRULED: -cp "../$JAR", which broke the documented
+# TLA_TOOLS=/path/tla2tools.jar form ("Could not find or load main class").
+case "$JAR" in /*) ;; *) JAR="$PWD/$JAR" ;; esac
 command -v java >/dev/null || { echo "FAIL: java not on PATH" >&2; exit 1; }
 
 HEAP="${TLC_HEAP:-3g}"
 WORKERS="${TLC_WORKERS:-1}"
 OUT=lattice16_maxops3_runs
 RESULTS=lattice16_maxops3_results.json
+# 2026-09-15 round 23: a cached verdict is reused only for the model that
+# produced it. If Memory.tla, Anomalies.tla, Guarded.tla or mkcfg.py differ
+# from the copies kept in $OUT, the run tree is cleared first; before this,
+# a changed model (round 23 retargeted A3) resumed on the old verdicts.
+if [ -d "$OUT" ] && ! { cmp -s Memory.tla "$OUT/Memory.tla" \
+                      && cmp -s Anomalies.tla "$OUT/Anomalies.tla" \
+                      && cmp -s Guarded.tla "$OUT/Guarded.model.tla" \
+                      && cmp -s mkcfg.py "$OUT/mkcfg.model.py"; }; then
+  echo "  model differs from the one that produced $OUT; clearing it"
+  rm -rf "$OUT"
+fi
 mkdir -p "$OUT"
 cp -f Memory.tla Anomalies.tla "$OUT/"
+cp -f Guarded.tla "$OUT/Guarded.model.tla"
+cp -f mkcfg.py "$OUT/mkcfg.model.py"
 
 mismatch=0
 n_safe=0
@@ -81,7 +99,7 @@ for g6 in FALSE TRUE; do
   # so an interrupted sweep continues instead of restarting. Delete
   # lattice16_maxops3_runs/ to force a clean sweep.
   if ! grep -qE 'No error has been found|is violated' "$OUT/$tag.log" 2>/dev/null; then
-    ( cd "$OUT" && java -Xmx"$HEAP" -cp "../$JAR" tlc2.TLC \
+    ( cd "$OUT" && java -Xmx"$HEAP" -cp "$JAR" tlc2.TLC \
         -workers "$WORKERS" -deadlock -config "$tag.cfg" "$tag.tla" > "$tag.log" 2>&1 ) || true
   fi
 

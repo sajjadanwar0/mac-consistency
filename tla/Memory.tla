@@ -30,7 +30,8 @@ OpRecord == [
     io             : Seq(Cells \X (Values \cup {NULL})),
     co             : Seq(Cells \X (Values \cup {NULL})),
     aborted        : BOOLEAN,
-    preds          : SUBSET Nat
+    preds          : SUBSET Nat,
+    externalized   : BOOLEAN
 ]
 
 EmptyOp(a) == [
@@ -48,7 +49,8 @@ EmptyOp(a) == [
     io             |-> <<>>,
     co             |-> <<>>,
     aborted        |-> FALSE,
-    preds          |-> {}
+    preds          |-> {},
+    externalized   |-> FALSE
 ]
 
 Bijections(S) ==
@@ -98,7 +100,8 @@ StartRead(a) ==
             io             |-> <<>>,
             co             |-> <<>>,
             aborted        |-> FALSE,
-            preds          |-> {}]]
+            preds          |-> {},
+            externalized   |-> FALSE]]
     /\ UNCHANGED <<log, registry, memory>>
 
 CompleteWrite(a) ==
@@ -127,7 +130,10 @@ CompleteWrite(a) ==
                             io             |-> ioSeq,
                             co             |-> coSeq,
                             aborted        |-> FALSE,
-                            preds          |-> {}]
+                            preds          |-> {},
+                            \* 2026-09-15 round 23: the base runtime externalizes
+                            \* an operation's tool effects at commit.
+                            externalized   |-> TRUE]
                     IN  /\ log'      = Append(log, newOp)
                         /\ memory'   = [c \in Cells |->
                                 IF c \in ws THEN wv[c] ELSE memory[c]]

@@ -8,7 +8,7 @@ Concurrency Anomalies in Multi-Agent Large Language Model Systems*
 |---|---|
 | `mac-consistency` (this repo) | TLA+ specifications, TLC model configs, TLAPS proofs, and the LaTeX source (`mac-consistency.tex`) |
 | `mac-consistency-runtime` | Executable Rust runtime (the L0–L4 backends, the four detector ports, and the live-agent `l2-live/` driver), plus two Verus-exec helpers (`verified_si.rs`, `lib_si_validate_exec.rs`) |
-| `mac-consistency-pilot` | The full Verus development (`verus-detector/`, 27 proof files, 274 curated / 295 full obligations) and the empirical Python harnesses |
+| `mac-consistency-pilot` | The full Verus development (`verus-detector/`, 29 counted proof files, 338 curated / 359 full obligations under Verus 0.2026.09.13.671956e) and the empirical Python harnesses |
 
 The consistency lattice is the linear chain **L0 ⊂ L1 ⊂ L2 ⊂ L3 ⊂ L4**
 over four formalized anomalies:
@@ -17,7 +17,7 @@ over four formalized anomalies:
 |---|---|---|
 | L0 | — (admits everything) | — |
 | L1 | `StaleGenerationFree` | A₁ stale generation |
-| L2 | `CausalCascadeFree` | A₃ causal cascade (unsupported read) |
+| L2 | `CausalCascadeFree` | A₃ causal cascade (an externalized effect whose causal basis was retracted) |
 | L3 | `ToolEffectReorderingFree` | A₆ tool-effect reordering |
 | L4 | `PhantomToolFree` | A₂ phantom tool |
 
@@ -64,7 +64,9 @@ These exhibit an anomaly by design; the violation trace **is** the result.
 - Anomaly witnesses: `MC_A1`, `MC_A2`, `MC_A3`, `MC_A6`
   (and `_medium` / `_large` bound variants).
 - Lattice incomparability: `MC_A3NotA6`, `MC_A6NotA3`
-  (A₃ and A₆ are mutually incomparable).
+  (A₃ and A₆ are mutually incomparable). Both extend `Guarded.tla` (G3 off
+  with G6 on, and G3 on with G6 off): the base `Memory` runtime records no
+  `preds` and has no abort, so A₃ is unreachable there.
 - Snapshot insufficiency: `MC_A1_struct{,_medium,_large}`
   (a per-read snapshot discipline does **not** prevent stale generation;
   this is the Section 4.3/4.4 demonstration).
@@ -97,17 +99,38 @@ it at L₁-but-not-L₂ together with the RYW vacuity above).
 ### A.3 The `AllowSkew` constant
 
 `Memory.tla` declares `CONSTANT AllowSkew`. `AllowSkew = TRUE` permits an
-ungrounded read, which is how the A₃ unsupported-read footprint is
+ungrounded read, which is how the flat-trace A₃ residue is
 witnessed in the model. Configs set it as a standalone `CONSTANT AllowSkew = ...`
 line:
 
-- **TRUE** for the A₃-witnessing models: `MC_A3*`, `MC_A6NotA3`,
+- **TRUE** for the residue-witnessing models `MC_A3*` and for
   `matrix/M_L*_CausalCascade`.
 - **FALSE** for all other Memory-extending models (grounded reads).
 
 `CodeCRDT.tla` does **not** extend `Memory`; it `INSTANCE`s it with
 `AllowSkew <- TRUE` (the relaxed, staleness-permitting refinement target).
 The `MC_CodeCRDT_*` configs therefore carry **no** `AllowSkew` line.
+
+### A.4 The parameterized runtime (`Guarded.tla`) and output commit
+
+`Guarded.tla` is the `Memory` runtime with four independent disciplines, one
+constant each: G1 read-set validation, G2 registry validation, G3 causal
+tracking with output commit, G6 commit-order sequencing. `lattice16.sh` checks
+all sixteen guard sets against all four anomalies (64 runs at `MaxOps=2`) and
+`lattice16_maxops3.sh` the sixteen A₃ points at `MaxOps=3`, `Cells={c1}`,
+where the transitive cascade first becomes reachable. The published matrix is
+`lattice16_results.reference.json`; `lattice16_maxops3_results.json` holds the
+`MaxOps=3` points.
+
+Since 2026-09-15 (round 23) A₃ (`CausalCascade`) is an operation that has
+**externalized** its tool effects while an operation in its causal closure is
+aborted. G3 prevents it by output commit: effects externalize only once every
+operation in the closure has externalized, and an externalized operation
+cannot be aborted. Without G3, effects externalize at commit and abort is
+unrestricted. The earlier predicate — a surviving, unaborted dependent — is
+kept as `CascadeUnpropagated`; a cascading abort falsifies it by flagging
+dependents whose effects are already out. `A3_witness_check.tla` checks both
+predicates on literal histories, including that relabeled case.
 
 ---
 
@@ -163,7 +186,7 @@ verus src/lib_detector_equivalence.rs        # 24 verified, 0 errors
 # Runtime L2 safety proof (transitive cascade + non-vacuity witness)
 verus src/lib_l2_safety.rs                   # 22 verified, 0 errors
 
-# Full obligation count (curated headline = 274; --full = 295 distinct)
+# Full obligation count under Verus 0.2026.09.13.671956e (curated = 338; --full = 359 distinct)
 cd ..
 ./verus_count.sh           # curated total
 ./verus_count.sh --full    # full distinct total
@@ -173,10 +196,11 @@ cd ../mac-consistency-runtime
 cargo build && cargo test                    # integration + in-module tests pass
 ```
 
-The detector's `a3_witness` is the same unsupported-read predicate as
-`Anomalies.tla`'s `CausalCascade` and the runtime state-view, so the A₃
-definition is consistent across prose, TLA+ model, TLC witness, Verus
-detector, and runtime.
+`Anomalies.tla`'s `CausalCascade` (A₃) is the externalized form above. Two
+Verus artifacts are not yet aligned with it: the L2 model's `a3_witness`
+(`lib_l2_safety.rs`) still states the unpropagated-flag form, and the verified
+detector `detect_a3` decides the flat-trace residue. Carrying output commit
+into the L2 model and its exec runtime is the next round.
 
 ---
 
@@ -184,14 +208,15 @@ detector, and runtime.
 
 | Component | Status |
 |---|---|
-| A₃ closure (prose / TLA+ / TLC witness / Verus detector / runtime / hierarchy) | consistent, verified |
+| A₃ in TLA+ (`Anomalies.tla`, G3 output commit in `Guarded.tla`, `A3_witness_check.tla`) | TLC-checked; the Verus L2 model still states the flag form |
+| `lattice16.sh` / `lattice16_maxops3.sh` | 64 and 16 runs, 0 mismatches |
 | `tla/matrix/Hierarchy.tla` | 15 obligations proved |
 | `tla/matrix/A1LowerBound.tla` | 28 obligations proved |
 | TLC anomaly / incomparability / matrix / struct models | reproduce as classified above |
 | `MC_CodeCRDT_RYW` baseline (`MaxOps=3`) | exhaustive, 9,348,770 states, no violation |
 | `MC_CodeCRDT_RYW` medium/large | bounded partial, no violation within budget |
 | Verus detector equivalence / runtime L2 safety | verified (24 / 22) — see `mac-consistency-pilot` |
-| Full Verus obligation count | 274 curated / 295 full (`verus_count.sh`) |
+| Full Verus obligation count | 338 curated / 359 full (`verus_count.sh`, Verus 0.2026.09.13.671956e) |
 | `matrix/Refinement.tla`, `matrix/CompletenessProof.tla` | `OMITTED` design skeletons |
 
 ---
@@ -207,5 +232,9 @@ detector, and runtime.
   `proofs/Incomparability.tla` and the rest of the `proofs/` duplicate are
   still present; `proofs/` is retained only for the recorded TLAPS logs and
   is otherwise superseded by `tla/matrix/`.
+- `tla/matrix/` and `proofs/` keep the earlier `CausalCascade` (the flag
+  form). No TLAPS theorem unfolds it — `Hierarchy.tla` proves by `DEF L0..L4`
+  and `A1LowerBound.tla` does not mention A₃ — so the recorded TLAPS results
+  stand; bringing those copies in line needs a `tlapm` run.
 - Generated artifacts (`*_TTrace_*`, `.tlacache/`, Rust `target/`) are
   git-ignored.

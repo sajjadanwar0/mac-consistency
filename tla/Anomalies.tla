@@ -20,7 +20,22 @@ PhantomTool(h) ==
         /\ h[i].planned_tool \notin h[i].write_registry
 
 ------------------------------------------------------------------------
+\* 2026-09-15 round 23.  A3 is an EXTERNALIZED effect whose causal basis
+\* was retracted: operation j issued its tool effects, and an operation in
+\* its causal closure was later aborted.  External effects cannot be recalled,
+\* so no later flag on j repairs this.
+\* OVERRULED (rounds <= 22): the cataloged A3 was
+\*     ~h[j].aborted /\ p \in h[j].preds /\ h[p].aborted
+\* which a cascading abort falsifies by flagging j aborted AFTER j's effects
+\* were out -- relabeling, not prevention.  It is kept below as
+\* CascadeUnpropagated: internal bookkeeping, not the cataloged anomaly.
 CausalCascade(h) ==
+    \E j \in 1..Len(h), p \in 1..Len(h) :
+        /\ h[j].externalized
+        /\ p \in h[j].preds
+        /\ h[p].aborted
+
+CascadeUnpropagated(h) ==
     \E j \in 1..Len(h), p \in 1..Len(h) :
         /\ ~ h[j].aborted
         /\ p \in h[j].preds
@@ -51,6 +66,7 @@ ToolEffectReordering(h) ==
 StaleGenerationFree(h)         == ~StaleGeneration(h)
 PhantomToolFree(h)             == ~PhantomTool(h)
 CausalCascadeFree(h)           == ~CausalCascade(h)
+CascadeUnpropagatedFree(h)     == ~CascadeUnpropagated(h)
 CausalCascadeResidueFree(h)    == ~CausalCascadeResidue(h)
 SplitViewFree(h)               == ~SplitView(h)
 ToolEffectReorderingFree(h)    == ~ToolEffectReordering(h)

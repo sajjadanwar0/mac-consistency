@@ -8,7 +8,7 @@
    "invariant": "NoA1",
    "expected": "WITNESS",
    "result": "WITNESS",
-   "distinct_states": "1798",
+   "distinct_states": "8679",
    "ok": "ok",
    "tag": "G1F_G2F_G3F_G6F_NoA1"
   },
@@ -20,7 +20,7 @@
    "invariant": "NoA2",
    "expected": "WITNESS",
    "result": "WITNESS",
-   "distinct_states": "202",
+   "distinct_states": "2190",
    "ok": "ok",
    "tag": "G1F_G2F_G3F_G6F_NoA2"
   },
@@ -32,7 +32,7 @@
    "invariant": "NoA3",
    "expected": "WITNESS",
    "result": "WITNESS",
-   "distinct_states": "12913",
+   "distinct_states": "18080",
    "ok": "ok",
    "tag": "G1F_G2F_G3F_G6F_NoA3"
   },
@@ -44,7 +44,7 @@
    "invariant": "NoA6",
    "expected": "WITNESS",
    "result": "WITNESS",
-   "distinct_states": "12",
+   "distinct_states": "283",
    "ok": "ok",
    "tag": "G1F_G2F_G3F_G6F_NoA6"
   },
@@ -56,7 +56,7 @@
    "invariant": "NoA1",
    "expected": "WITNESS",
    "result": "WITNESS",
-   "distinct_states": "1248",
+   "distinct_states": "11795",
    "ok": "ok",
    "tag": "G1F_G2F_G3F_G6T_NoA1"
   },
@@ -68,7 +68,7 @@
    "invariant": "NoA2",
    "expected": "WITNESS",
    "result": "WITNESS",
-   "distinct_states": "161",
+   "distinct_states": "3584",
    "ok": "ok",
    "tag": "G1F_G2F_G3F_G6T_NoA2"
   },
@@ -80,7 +80,7 @@
    "invariant": "NoA3",
    "expected": "WITNESS",
    "result": "WITNESS",
-   "distinct_states": "8409",
+   "distinct_states": "5541",
    "ok": "ok",
    "tag": "G1F_G2F_G3F_G6T_NoA3"
   },
@@ -104,7 +104,7 @@
    "invariant": "NoA1",
    "expected": "WITNESS",
    "result": "WITNESS",
-   "distinct_states": "1798",
+   "distinct_states": "14684",
    "ok": "ok",
    "tag": "G1F_G2F_G3T_G6F_NoA1"
   },
@@ -116,7 +116,7 @@
    "invariant": "NoA2",
    "expected": "WITNESS",
    "result": "WITNESS",
-   "distinct_states": "202",
+   "distinct_states": "4970",
    "ok": "ok",
    "tag": "G1F_G2F_G3T_G6F_NoA2"
   },
@@ -128,7 +128,7 @@
    "invariant": "NoA3",
    "expected": "SAFE",
    "result": "SAFE",
-   "distinct_states": "941970",
+   "distinct_states": "2015279",
    "ok": "ok",
    "tag": "G1F_G2F_G3T_G6F_NoA3"
   },
@@ -140,7 +140,7 @@
    "invariant": "NoA6",
    "expected": "WITNESS",
    "result": "WITNESS",
-   "distinct_states": "12",
+   "distinct_states": "294",
    "ok": "ok",
    "tag": "G1F_G2F_G3T_G6F_NoA6"
   },
@@ -152,7 +152,7 @@
    "invariant": "NoA1",
    "expected": "WITNESS",
    "result": "WITNESS",
-   "distinct_states": "1248",
+   "distinct_states": "8801",
    "ok": "ok",
    "tag": "G1F_G2F_G3T_G6T_NoA1"
   },
@@ -164,7 +164,7 @@
    "invariant": "NoA2",
    "expected": "WITNESS",
    "result": "WITNESS",
-   "distinct_states": "161",
+   "distinct_states": "2523",
    "ok": "ok",
    "tag": "G1F_G2F_G3T_G6T_NoA2"
   },
@@ -176,7 +176,7 @@
    "invariant": "NoA3",
    "expected": "SAFE",
    "result": "SAFE",
-   "distinct_states": "495490",
+   "distinct_states": "1061795",
    "ok": "ok",
    "tag": "G1F_G2F_G3T_G6T_NoA3"
   },
@@ -188,7 +188,7 @@
    "invariant": "NoA6",
    "expected": "SAFE",
    "result": "SAFE",
-   "distinct_states": "495490",
+   "distinct_states": "1061795",
    "ok": "ok",
    "tag": "G1F_G2F_G3T_G6T_NoA6"
   },
@@ -200,7 +200,7 @@
    "invariant": "NoA1",
    "expected": "WITNESS",
    "result": "WITNESS",
-   "distinct_states": "1779",
+   "distinct_states": "11994",
    "ok": "ok",
    "tag": "G1F_G2T_G3F_G6F_NoA1"
   },
@@ -224,7 +224,7 @@
    "invariant": "NoA3",
    "expected": "WITNESS",
    "result": "WITNESS",
-   "distinct_states": "12556",
+   "distinct_states": "5919",
    "ok": "ok",
    "tag": "G1F_G2T_G3F_G6F_NoA3"
   },
@@ -236,7 +236,7 @@
    "invariant": "NoA6",
    "expected": "WITNESS",
    "result": "WITNESS",
-   "distinct_states": "12",
+   "distinct_states": "257",
    "ok": "ok",
    "tag": "G1F_G2T_G3F_G6F_NoA6"
   },
@@ -248,7 +248,7 @@
    "invariant": "NoA1",
    "expected": "WITNESS",
    "result": "WITNESS",
-   "distinct_states": "1234",
+   "distinct_states": "9528",
    "ok": "ok",
    "tag": "G1F_G2T_G3F_G6T_NoA1"
   },
@@ -272,7 +272,7 @@
    "invariant": "NoA3",
    "expected": "WITNESS",
    "result": "WITNESS",
-   "distinct_states": "8150",
+   "distinct_states": "10236",
    "ok": "ok",
    "tag": "G1F_G2T_G3F_G6T_NoA3"
   },
@@ -296,7 +296,7 @@
    "invariant": "NoA1",
    "expected": "WITNESS",
    "result": "WITNESS",
-   "distinct_states": "1779",
+   "distinct_states": "11633",
    "ok": "ok",
    "tag": "G1F_G2T_G3T_G6F_NoA1"
   },
@@ -308,7 +308,7 @@
    "invariant": "NoA2",
    "expected": "SAFE",
    "result": "SAFE",
-   "distinct_states": "737992",
+   "distinct_states": "1573274",
    "ok": "ok",
    "tag": "G1F_G2T_G3T_G6F_NoA2"
   },
@@ -320,7 +320,7 @@
    "invariant": "NoA3",
    "expected": "SAFE",
    "result": "SAFE",
-   "distinct_states": "737992",
+   "distinct_states": "1573274",
    "ok": "ok",
    "tag": "G1F_G2T_G3T_G6F_NoA3"
   },
@@ -332,7 +332,7 @@
    "invariant": "NoA6",
    "expected": "WITNESS",
    "result": "WITNESS",
-   "distinct_states": "12",
+   "distinct_states": "255",
    "ok": "ok",
    "tag": "G1F_G2T_G3T_G6F_NoA6"
   },
@@ -344,7 +344,7 @@
    "invariant": "NoA1",
    "expected": "WITNESS",
    "result": "WITNESS",
-   "distinct_states": "1234",
+   "distinct_states": "10813",
    "ok": "ok",
    "tag": "G1F_G2T_G3T_G6T_NoA1"
   },
@@ -356,7 +356,7 @@
    "invariant": "NoA2",
    "expected": "SAFE",
    "result": "SAFE",
-   "distinct_states": "389320",
+   "distinct_states": "830978",
    "ok": "ok",
    "tag": "G1F_G2T_G3T_G6T_NoA2"
   },
@@ -368,7 +368,7 @@
    "invariant": "NoA3",
    "expected": "SAFE",
    "result": "SAFE",
-   "distinct_states": "389320",
+   "distinct_states": "830978",
    "ok": "ok",
    "tag": "G1F_G2T_G3T_G6T_NoA3"
   },
@@ -380,7 +380,7 @@
    "invariant": "NoA6",
    "expected": "SAFE",
    "result": "SAFE",
-   "distinct_states": "389320",
+   "distinct_states": "830978",
    "ok": "ok",
    "tag": "G1F_G2T_G3T_G6T_NoA6"
   },
@@ -404,7 +404,7 @@
    "invariant": "NoA2",
    "expected": "WITNESS",
    "result": "WITNESS",
-   "distinct_states": "202",
+   "distinct_states": "2936",
    "ok": "ok",
    "tag": "G1T_G2F_G3F_G6F_NoA2"
   },
@@ -416,7 +416,7 @@
    "invariant": "NoA3",
    "expected": "WITNESS",
    "result": "WITNESS",
-   "distinct_states": "12017",
+   "distinct_states": "8097",
    "ok": "ok",
    "tag": "G1T_G2F_G3F_G6F_NoA3"
   },
@@ -428,7 +428,7 @@
    "invariant": "NoA6",
    "expected": "WITNESS",
    "result": "WITNESS",
-   "distinct_states": "12",
+   "distinct_states": "194",
    "ok": "ok",
    "tag": "G1T_G2F_G3F_G6F_NoA6"
   },
@@ -452,7 +452,7 @@
    "invariant": "NoA2",
    "expected": "WITNESS",
    "result": "WITNESS",
-   "distinct_states": "161",
+   "distinct_states": "3328",
    "ok": "ok",
    "tag": "G1T_G2F_G3F_G6T_NoA2"
   },
@@ -464,7 +464,7 @@
    "invariant": "NoA3",
    "expected": "WITNESS",
    "result": "WITNESS",
-   "distinct_states": "8009",
+   "distinct_states": "11268",
    "ok": "ok",
    "tag": "G1T_G2F_G3F_G6T_NoA3"
   },
@@ -488,7 +488,7 @@
    "invariant": "NoA1",
    "expected": "SAFE",
    "result": "SAFE",
-   "distinct_states": "790546",
+   "distinct_states": "1674575",
    "ok": "ok",
    "tag": "G1T_G2F_G3T_G6F_NoA1"
   },
@@ -500,7 +500,7 @@
    "invariant": "NoA2",
    "expected": "WITNESS",
    "result": "WITNESS",
-   "distinct_states": "202",
+   "distinct_states": "3836",
    "ok": "ok",
    "tag": "G1T_G2F_G3T_G6F_NoA2"
   },
@@ -512,7 +512,7 @@
    "invariant": "NoA3",
    "expected": "SAFE",
    "result": "SAFE",
-   "distinct_states": "790546",
+   "distinct_states": "1674575",
    "ok": "ok",
    "tag": "G1T_G2F_G3T_G6F_NoA3"
   },
@@ -524,7 +524,7 @@
    "invariant": "NoA6",
    "expected": "WITNESS",
    "result": "WITNESS",
-   "distinct_states": "12",
+   "distinct_states": "368",
    "ok": "ok",
    "tag": "G1T_G2F_G3T_G6F_NoA6"
   },
@@ -536,7 +536,7 @@
    "invariant": "NoA1",
    "expected": "SAFE",
    "result": "SAFE",
-   "distinct_states": "427890",
+   "distinct_states": "909695",
    "ok": "ok",
    "tag": "G1T_G2F_G3T_G6T_NoA1"
   },
@@ -548,7 +548,7 @@
    "invariant": "NoA2",
    "expected": "WITNESS",
    "result": "WITNESS",
-   "distinct_states": "161",
+   "distinct_states": "2969",
    "ok": "ok",
    "tag": "G1T_G2F_G3T_G6T_NoA2"
   },
@@ -560,7 +560,7 @@
    "invariant": "NoA3",
    "expected": "SAFE",
    "result": "SAFE",
-   "distinct_states": "427890",
+   "distinct_states": "909695",
    "ok": "ok",
    "tag": "G1T_G2F_G3T_G6T_NoA3"
   },
@@ -572,7 +572,7 @@
    "invariant": "NoA6",
    "expected": "SAFE",
    "result": "SAFE",
-   "distinct_states": "427890",
+   "distinct_states": "909695",
    "ok": "ok",
    "tag": "G1T_G2F_G3T_G6T_NoA6"
   },
@@ -608,7 +608,7 @@
    "invariant": "NoA3",
    "expected": "WITNESS",
    "result": "WITNESS",
-   "distinct_states": "11660",
+   "distinct_states": "7876",
    "ok": "ok",
    "tag": "G1T_G2T_G3F_G6F_NoA3"
   },
@@ -620,7 +620,7 @@
    "invariant": "NoA6",
    "expected": "WITNESS",
    "result": "WITNESS",
-   "distinct_states": "12",
+   "distinct_states": "178",
    "ok": "ok",
    "tag": "G1T_G2T_G3F_G6F_NoA6"
   },
@@ -656,7 +656,7 @@
    "invariant": "NoA3",
    "expected": "WITNESS",
    "result": "WITNESS",
-   "distinct_states": "7750",
+   "distinct_states": "6557",
    "ok": "ok",
    "tag": "G1T_G2T_G3F_G6T_NoA3"
   },
@@ -680,7 +680,7 @@
    "invariant": "NoA1",
    "expected": "SAFE",
    "result": "SAFE",
-   "distinct_states": "632264",
+   "distinct_states": "1335386",
    "ok": "ok",
    "tag": "G1T_G2T_G3T_G6F_NoA1"
   },
@@ -692,7 +692,7 @@
    "invariant": "NoA2",
    "expected": "SAFE",
    "result": "SAFE",
-   "distinct_states": "632264",
+   "distinct_states": "1335386",
    "ok": "ok",
    "tag": "G1T_G2T_G3T_G6F_NoA2"
   },
@@ -704,7 +704,7 @@
    "invariant": "NoA3",
    "expected": "SAFE",
    "result": "SAFE",
-   "distinct_states": "632264",
+   "distinct_states": "1335386",
    "ok": "ok",
    "tag": "G1T_G2T_G3T_G6F_NoA3"
   },
@@ -716,7 +716,7 @@
    "invariant": "NoA6",
    "expected": "WITNESS",
    "result": "WITNESS",
-   "distinct_states": "12",
+   "distinct_states": "267",
    "ok": "ok",
    "tag": "G1T_G2T_G3T_G6F_NoA6"
   },
@@ -728,7 +728,7 @@
    "invariant": "NoA1",
    "expected": "SAFE",
    "result": "SAFE",
-   "distinct_states": "342120",
+   "distinct_states": "724778",
    "ok": "ok",
    "tag": "G1T_G2T_G3T_G6T_NoA1"
   },
@@ -740,7 +740,7 @@
    "invariant": "NoA2",
    "expected": "SAFE",
    "result": "SAFE",
-   "distinct_states": "342120",
+   "distinct_states": "724778",
    "ok": "ok",
    "tag": "G1T_G2T_G3T_G6T_NoA2"
   },
@@ -752,7 +752,7 @@
    "invariant": "NoA3",
    "expected": "SAFE",
    "result": "SAFE",
-   "distinct_states": "342120",
+   "distinct_states": "724778",
    "ok": "ok",
    "tag": "G1T_G2T_G3T_G6T_NoA3"
   },
@@ -764,7 +764,7 @@
    "invariant": "NoA6",
    "expected": "SAFE",
    "result": "SAFE",
-   "distinct_states": "342120",
+   "distinct_states": "724778",
    "ok": "ok",
    "tag": "G1T_G2T_G3T_G6T_NoA6"
   }
